@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs-extra');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
-const fileUpload = require('express-fileUpload');
+const fileUpload = require('express-fileupload');
 const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config()
 
@@ -21,9 +21,6 @@ app.use(fileUpload());
 
 const port = 5000
 
-app.get('/', (req, res) => {
-  res.send('Hello working form creative agency!')
-})
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
@@ -157,11 +154,11 @@ client.connect(err => {
     .catch(err => console.log(err))
   })
 
-
-
-
-
-
 });
 
-app.listen(process.env.port || port) 
+app.get('/', (req, res) => {
+  res.send('Hello working form creative agency!')
+})
+
+
+app.listen(process.env.PORT || port) 
