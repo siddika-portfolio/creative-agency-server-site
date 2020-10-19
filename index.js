@@ -65,10 +65,11 @@ client.connect(err => {
     const file = req.files.file;
     const name = req.body.name;
     const email = req.body.email;
-    const selectedServiceName = req.body.selectedServiceName;
+    const selectedServiceName = req.body.title;
     const description = req.body.description;
     const price = req.body.price;
     const serviceId = req.body.serviceId;
+    const status = req.body.status;
     
     const newImg =file.data
     const encImg = newImg.toString('base64');
@@ -79,14 +80,14 @@ client.connect(err => {
       img: Buffer.from(encImg, 'base64')
     }
 
-    placeOrderCollection.insertOne({  name, email, selectedServiceName, description, price, image, serviceId })
+    placeOrderCollection.insertOne({  name, email, selectedServiceName, description, price, image, serviceId,status })
     .then(result => {
       res.send(result.insertedCount > 0)
     })
 
   })
 
-  app.post('/getUserOrderList', (req, res) => {
+  app.post('/getUserOrder', (req, res) => {
     const email = req.body.email;
     placeOrderCollection.find({ email: email })
       .toArray((err, docs) => {
@@ -97,7 +98,7 @@ client.connect(err => {
   app.post('/getOrderedServiceList', (req, res) => {
     const serviceId = req.body.serviceId;
     console.log(serviceId)
-    serviceCollection.find({ _id: ObjectId(serviceId) })
+    servicesCollection.find({ _id: ObjectId(serviceId) })
       .toArray((err, docs) => {
         res.status(200).send(docs);
 
@@ -145,7 +146,16 @@ client.connect(err => {
     })
   })
 
-
+  app.patch('/update-status', (req,res) => {
+    placeOrderCollection.updateOne(
+      {_id:ObjectId(req.body.id)},
+      { $set: {'status':req.body.status}}
+    )
+    .then(result => {
+      res.send(result.modifiedCount> 0)
+    })
+    .catch(err => console.log(err))
+  })
 
 
 
